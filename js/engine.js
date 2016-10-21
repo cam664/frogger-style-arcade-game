@@ -45,6 +45,8 @@ var Engine = (function(global) {
 
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
+         * Stop update() and render() if gameRun = false freezing player
+         * and enemy position on screen.
          */
         if (gameRun) {
         update(dt);
@@ -71,6 +73,7 @@ var Engine = (function(global) {
         lastTime = Date.now();
         main();
         createEnemies();
+        createStars();
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -85,6 +88,8 @@ var Engine = (function(global) {
     function update(dt) {
         updateEntities(dt);
         collisionDetectPlayerEnemy();
+        collisionDetectPlayerStar();
+        collisionDetectPlayerGoal()
     }
 
     /* This is called by the update function and loops through all of the
@@ -105,23 +110,46 @@ var Engine = (function(global) {
     //check for collisions between player and enemy entities. On collision invoke onPlayerCollide callback
     function collisionDetectPlayerEnemy() {
         allEnemies.forEach(function(enemy){
-            checkCollisions(player, enemy, onPlayerCollide);                   
+            checkCollisions(player, enemy, onEnemyCollide);                   
         });
-        function onPlayerCollide(){
-            gameRun = false;
-            player.blinking = true;
-            player.blink();
-            setTimeout(reset, 2000);
-            
-        }
     }
-
+    
+    function collisionDetectPlayerStar() {
+        allStars.forEach(function(star){
+            checkCollisions(player, star, onStarPickup); 
+        });
+    }
+    
+    function collisionDetectPlayerGoal() {
+        checkCollisions(player, goal, onGoalCollide);
+    }
+    
+    function onEnemyCollide() {
+        gameRun = false;
+        ctx.filter = 'brightness(120%)';
+        setTimeout(reset, 1500);  
+    }
+    
+    function onStarPickup() {
+        starCount++;
+        allStars.pop();
+        if (starCount !== starGoal) {
+            createStars();
+        }    
+    }
+    
+    function onGoalCollide() {
+        starCount = 0;
+        starGoal + 2;
+        reset();
+    }
+    
     // Collision detection function
     function checkCollisions(obj1, obj2, callback){
-        if (obj1.x < obj2.x + obj2.width/collisionHitboxReduce &&
-           obj1.x + obj1.width/collisionHitboxReduce > obj2.x &&
-           obj1.y < obj2.y + obj2.height/collisionHitboxReduce &&
-           obj1.height/collisionHitboxReduce + obj1.y > obj2.y) {
+        if (obj1.x < obj2.x + obj2.width/COLLISION_HITBOX_REDUCE &&
+           obj1.x + obj1.width/COLLISION_HITBOX_REDUCE > obj2.x &&
+           obj1.y < obj2.y + obj2.height/COLLISION_HITBOX_REDUCE &&
+           obj1.height/COLLISION_HITBOX_REDUCE + obj1.y > obj2.y) {
             callback();
         }
     }; 
@@ -179,8 +207,13 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
+        allStars.forEach(function(star) {
+            star.render();
+        });
         player.render();
+        if (starCount == starGoal) {
+            goal.render();
+        }
     }
 
     /* This function does nothing but it could have been a good place to
@@ -189,9 +222,10 @@ var Engine = (function(global) {
      */
     function reset() {
         gameRun = true;
-        player.blinking = false;
-        player.x = playerStartPosX;
-        player.y = playerStartPosY;
+        
+        ctx.filter = 'brightness(100%)';
+        player.x = PLAYER_START_POS_X;
+        player.y = PLAYER_START_POS_Y;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -203,7 +237,9 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/Star.png',
+        'images/Selector.png'
     ]);
     Resources.onReady(init);
 
