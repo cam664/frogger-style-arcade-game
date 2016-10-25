@@ -33,12 +33,21 @@ var level = 1;
 var lives = 3;
 
 var charList = document.getElementsByTagName('img');
-//random number helper function
+
+/*********************************************************
+ * 
+ * random number helper function
+ *
+ **********************************************************/
 function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// Increase difficulty 
+/***********************************************************
+ *
+ * Increase difficulty. Runs after completeing a level (player reaches starGoal)
+ *
+ ***********************************************************/
 function increaseDifficulty() {
     level += 1;
     starCount = 0;
@@ -50,15 +59,6 @@ function increaseDifficulty() {
     createEnemies()
     if (level > 4) {
         baseEnemySpeed += 5;
-    }
-}
-
-//create a set of enemies and assign a 
-//random lane, speed and respawn trigger number
-function createEnemies() {
-    for (var i = 0; i < maxCreatedEnemies; i++) {
-        var enemy = new Enemy(randomNum(0,2), baseEnemySpeed * randomNum(5,15), randomNum(0,300));
-        allEnemies.push(enemy);
     }
 }
 
@@ -96,6 +96,7 @@ Enemy.prototype.respawn = function() {
         this.x = GAME_CANVAS_BORDER_LEFT - ENTITY_WIDTH;
     }
 };
+
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -133,7 +134,6 @@ Player.prototype.handleInput = function(key) {
             this.y += PLAYER_MOVE_DOWN;
         }
     }    
-    console.log(player.x, player.y);
 };
 
 Player.prototype.update = function(dt) {
@@ -168,11 +168,6 @@ Star.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-function createStars() {
-    var star = new Star(randomNum(0,2), Math.round(randomNum(0,400)/100)*100);
-    allStars.push(star);
-}
-
 /****************************************************
  * 
  * Goal class. The goal player must reach after collecting all the stars to advance to next level
@@ -193,6 +188,21 @@ Goal.prototype.render = function() {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+
+// Create a star and position randomly on a stone block
+createStars = function() {
+    var star = new Star(randomNum(0,2), Math.round(randomNum(0,400)/100)*100);
+    allStars.push(star);
+}
+
+//create a set of enemies and assign a random lane, speed and respawn trigger number
+createEnemies = function() {
+    for (var i = 0; i < maxCreatedEnemies; i++) {
+        var enemy = new Enemy(randomNum(0,2), baseEnemySpeed * randomNum(5,15), randomNum(0,300));
+        allEnemies.push(enemy);
+    }
+};
+
 var allStars = [];
          
 var allEnemies = [];
@@ -200,6 +210,7 @@ var allEnemies = [];
 var player = new Player;
 
 var goal = new Goal;
+
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
@@ -209,7 +220,6 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down'
     };
-    console.log(allowedKeys[e.keyCode]);
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
@@ -223,7 +233,6 @@ function hudInfo() {
     levelHUD.innerHTML = 'Level: ' + level;
     starCountHUD.innerHTML = 'Stars Collected: ' + starCount + '/' + starGoal;
 }
-
 
 /**********************************************************
  *

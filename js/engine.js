@@ -111,7 +111,7 @@ var Engine = (function(global) {
 
     /*****************************************************
      * 
-     * Collision detection
+     * Collision detection. Third param of check collisions is a callback.
      * 
      *****************************************************/
     function collisionDetectPlayerEnemy() {
@@ -233,11 +233,16 @@ var Engine = (function(global) {
         }
     }
 
-    /* This function does nothing but it could have been a good place to
+    /**************************************************************************
+     *
+     * This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
-     */
+     * ***Game reset Handling***
+     *
+     **************************************************************************/
     
+    //gameOver runs when players lives = 0
     function gameOver() {
         dead = true;
         level = 1;
@@ -255,14 +260,14 @@ var Engine = (function(global) {
         player.y = PLAYER_START_POS_Y;
         render();
     }
-    
+    //reset runs after player collides with an enemy
     function reset() {
         gameRun = true;
         ctx.filter = 'brightness(100%)';
         player.x = PLAYER_START_POS_X;
         player.y = PLAYER_START_POS_Y;
     }
-
+    //Menu 'Play' button. If dead = true (player lives = 0) createStars and Enemies again for new game
     startGameBtn.addEventListener('click', function(){
         menu.style.display = 'none';
         if (!dead) {
