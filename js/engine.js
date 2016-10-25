@@ -242,6 +242,7 @@ var Engine = (function(global) {
         dead = true;
         level = 1;
         starCount = 0;
+        starGoal = 2;
         lives = 3;
         maxCreatedEnemies = 3;
         baseEnemySpeed = 20;
