@@ -23,12 +23,13 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        gameRun = false,
+        gameRun = false, //if gameRun = false update and render functions for game entities will halt. gameRun set to true by reset()
+        dead = false,
         lastTime;
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+    container.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -69,11 +70,11 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
         lastTime = Date.now();
         main();
-        createEnemies();
         createStars();
+        createEnemies();
+        render();
     }
 
     /* This function is called by main (our game loop) and itself calls all
@@ -89,7 +90,8 @@ var Engine = (function(global) {
         updateEntities(dt);
         collisionDetectPlayerEnemy();
         collisionDetectPlayerStar();
-        collisionDetectPlayerGoal()
+        collisionDetectPlayerGoal();
+        hudInfo();
     }
 
     /* This is called by the update function and loops through all of the
@@ -107,41 +109,51 @@ var Engine = (function(global) {
         player.update();
     }
 
-    //check for collisions between player and enemy entities. On collision invoke onPlayerCollide callback
+    /*****************************************************
+     * 
+     * Collision detection
+     * 
+     *****************************************************/
     function collisionDetectPlayerEnemy() {
         allEnemies.forEach(function(enemy){
-            checkCollisions(player, enemy, onEnemyCollide);                   
+            checkCollisions(player, enemy, onCollisionPlayerEnemy);                   
         });
     }
     
     function collisionDetectPlayerStar() {
         allStars.forEach(function(star){
-            checkCollisions(player, star, onStarPickup); 
+            checkCollisions(player, star, onCollisionPlayerStar); 
         });
     }
     
     function collisionDetectPlayerGoal() {
-        checkCollisions(player, goal, onGoalCollide);
+        checkCollisions(player, goal, onCollisionPlayerGoal);
     }
     
-    function onEnemyCollide() {
+    function onCollisionPlayerEnemy() {
+        lives -= 1;
         gameRun = false;
         ctx.filter = 'brightness(120%)';
-        setTimeout(reset, 1500);  
+        if (lives > 0) {
+            setTimeout(reset, 1500);
+        } else {
+            setTimeout(gameOver, 1500);
+        }
     }
     
-    function onStarPickup() {
+    function onCollisionPlayerStar() {
         starCount++;
-        allStars.pop();
+        allStars = [];
         if (starCount !== starGoal) {
             createStars();
         }    
     }
     
-    function onGoalCollide() {
-        starCount = 0;
-        starGoal + 2;
-        reset();
+    function onCollisionPlayerGoal() {
+        if (starCount == starGoal){
+            increaseDifficulty();
+            reset();
+        }    
     }
     
     // Collision detection function
@@ -207,10 +219,15 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-        allStars.forEach(function(star) {
-            star.render();
-        });
+        
+        if (gameRun) {
+            allStars.forEach(function(star) {
+                star.render();
+            });
+        }       
+        
         player.render();
+        
         if (starCount == starGoal) {
             goal.render();
         }
@@ -220,14 +237,42 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
+    
+    function gameOver() {
+        dead = true;
+        level = 1;
+        starCount = 0;
+        lives = 3;
+        maxCreatedEnemies = 3;
+        baseEnemySpeed = 20;
+        allEnemies = [];
+        allStars = [];
+        player.sprite = 'images/char-empty.png'
+        ctx.filter = 'brightness(100%)';
+        menu.style.display = 'block';
+        player.x = PLAYER_START_POS_X;
+        player.y = PLAYER_START_POS_Y;
+        render();
+    }
+    
     function reset() {
         gameRun = true;
-        
         ctx.filter = 'brightness(100%)';
         player.x = PLAYER_START_POS_X;
         player.y = PLAYER_START_POS_Y;
     }
 
+    startGameBtn.addEventListener('click', function(){
+        menu.style.display = 'none';
+        if (!dead) {
+            reset();
+        } else {
+            gameRun = true;
+            createStars();
+            createEnemies();
+        }    
+    }, false)   
+    
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
@@ -238,6 +283,11 @@ var Engine = (function(global) {
         'images/grass-block.png',
         'images/enemy-bug.png',
         'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/char-empty.png',
         'images/Star.png',
         'images/Selector.png'
     ]);

@@ -8,14 +8,14 @@ var PLAYER_START_POS_Y = 401;
 var GOAL_POS_X = 201;
 var GOAL_POS_Y = -39;
 
-var PLAYER_MOVE_UP = -88;
-var PLAYER_MOVE_DOWN = 88;
+var PLAYER_MOVE_UP = -85;
+var PLAYER_MOVE_DOWN = 85;
 var PLAYER_MOVE_LEFT = -100;
 var PLAYER_MOVE_RIGHT = 100
 
 var GAME_CANVAS_BORDER_LEFT = 0;
 var GAME_CANVAS_BORDER_RIGHT = 400;
-var GAME_CANVAS_BORDER_TOP = -58;
+var GAME_CANVAS_BORDER_TOP = -24;
 var GAME_CANVAS_BORDER_BOTTOM = 401;
 
 var ENTITY_WIDTH = 101;
@@ -27,29 +27,43 @@ var maxCreatedEnemies = 3;
 var baseEnemySpeed = 20;
 
 var starCount = 0;
-var starGoal = 3;
+var starGoal = 2;
 
+var level = 1;
+var lives = 3;
+
+var charList = document.getElementsByTagName('img');
 //random number helper function
 function randomNum(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Increase difficulty 
+function increaseDifficulty() {
+    level += 1;
+    starCount = 0;
+    starGoal += 1;
+    allStars = [];
+    createStars();
+    allEnemies = [];
+    maxCreatedEnemies += 1;
+    createEnemies()
+    if (level > 4) {
+        baseEnemySpeed += 5;
+    }
 }
 
 //create a set of enemies and assign a 
 //random lane, speed and respawn trigger number
 function createEnemies() {
     for (var i = 0; i < maxCreatedEnemies; i++) {
-        var enemy = new Enemy(randomNum(0,2), baseEnemySpeed * randomNum(5,18), randomNum(0,300));
+        var enemy = new Enemy(randomNum(0,2), baseEnemySpeed * randomNum(5,15), randomNum(0,300));
         allEnemies.push(enemy);
     }
 }
 
 // Enemies our player must avoid
 var Enemy = function(lane, speed, respawnNum) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
     this.width = ENTITY_WIDTH;
     this.height = ENTITY_HEIGHT;
@@ -91,7 +105,7 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
+    this.sprite = 'images/char-empty.png';
     this.width = ENTITY_WIDTH;
     this.height = ENTITY_HEIGHT;
     this.x = PLAYER_START_POS_X;
@@ -155,10 +169,8 @@ Star.prototype.render = function() {
 };
 
 function createStars() {
-    //for (var i = 0; allStars.length < maxCreatedStars; i++){
-        var star = new Star(randomNum(0,2), Math.round(randomNum(0,400)/100)*100);
-        allStars.push(star);
-  //  }
+    var star = new Star(randomNum(0,2), Math.round(randomNum(0,400)/100)*100);
+    allStars.push(star);
 }
 
 /****************************************************
@@ -201,3 +213,38 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
+/**********************************************************
+ *
+ * HUD
+ *
+ *********************************************************/
+function hudInfo() {
+    livesHUD.innerHTML = 'Lives: ' + lives + '/ 3';
+    levelHUD.innerHTML = 'Level: ' + level;
+    starCountHUD.innerHTML = 'Stars Collected: ' + starCount + '/' + starGoal;
+}
+
+
+/**********************************************************
+ *
+ * Character selection
+ *
+ *********************************************************/
+for (var i = 0; i < charList.length; i++){
+    charList[i].addEventListener('click', charSelect, false);
+} 
+                          
+function charSelect() {
+    if (event.target == charList[0]) {
+       player.sprite = 'images/char-boy.png';
+   } else if (event.target == charList[1]) {
+       player.sprite = 'images/char-cat-girl.png';
+   } else if (event.target == charList[2]) {
+       player.sprite = 'images/char-horn-girl.png';
+   } else if (event.target == charList[3]) {
+       player.sprite = 'images/char-pink-girl.png';
+   } else if (event.target == charList[4]) {
+       player.sprite = 'images/char-princess-girl.png';
+   }
+   player.render();    
+}
