@@ -1,25 +1,25 @@
 frontend-nanodegree-arcade-game
 ===============================
-
-Teaches concepts including:
-
-  Scopes and Closures
-  Execution Contexts vs Lexical Scopes
-  In-Memory Scopes vs In-Memory Objects
-  the 'this' Keyword
-  Prototype Chains
-  Object Decorator Pattern
-  Functional Classes and Prototypal Classes
-  Pseudoclassical Patterns
-  Pseudoclassical Superclasses and Subclasses
-  
-Playing the game:
-
-  Arrow keys to move
-  Pick up the required stars then take them to the collection area that appears
-  Grass and water are safe
-  Avoid the ladybugs running across the stones
-  You get 3 lives, see what level to can make it too!
+<br>
+Teaches concepts including:<br>
+<br>
+  Scopes and Closures<br>
+  Execution Contexts vs Lexical Scopes<br>
+  In-Memory Scopes vs In-Memory Objects<br>
+  the 'this' Keyword<br>
+  Prototype Chains<br>
+  Object Decorator Pattern<br>
+  Functional Classes and Prototypal Classes<br>
+  Pseudoclassical Patterns<br>
+  Pseudoclassical Superclasses and Subclasses<br>
+<br>
+Playing the game:<br>
+<br>
+  Arrow keys to move<br>
+  Pick up the required stars then take them to the collection area that appears<br>
+  Grass and water are safe<br>
+  Avoid the ladybugs running across the stones<br>
+  You get 3 lives, see what level to can make it too!<br>
 
   
 
