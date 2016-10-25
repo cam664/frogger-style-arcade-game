@@ -190,13 +190,13 @@ Goal.prototype.render = function() {
 // Place the player object in a variable called player
 
 // Create a star and position randomly on a stone block
-createStars = function() {
+var createStars = function() {
     var star = new Star(randomNum(0,2), Math.round(randomNum(0,400)/100)*100);
     allStars.push(star);
 }
 
 //create a set of enemies and assign a random lane, speed and respawn trigger number
-createEnemies = function() {
+var createEnemies = function() {
     for (var i = 0; i < maxCreatedEnemies; i++) {
         var enemy = new Enemy(randomNum(0,2), baseEnemySpeed * randomNum(5,15), randomNum(0,300));
         allEnemies.push(enemy);
