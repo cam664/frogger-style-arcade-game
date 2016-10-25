@@ -1,6 +1,25 @@
 frontend-nanodegree-arcade-game
 ===============================
+<br>
+Teaches concepts including:<br>
+<br>
+  Scopes and Closures<br>
+  Execution Contexts vs Lexical Scopes<br>
+  In-Memory Scopes vs In-Memory Objects<br>
+  the 'this' Keyword<br>
+  Prototype Chains<br>
+  Object Decorator Pattern<br>
+  Functional Classes and Prototypal Classes<br>
+  Pseudoclassical Patterns<br>
+  Pseudoclassical Superclasses and Subclasses<br>
+<br>
+Playing the game:<br>
+<br>
+  Arrow keys to move<br>
+  Pick up the required stars then take them to the collection area that appears<br>
+  Grass and water are safe<br>
+  Avoid the ladybugs running across the stones<br>
+  You get 3 lives, see what level to can make it too!<br>
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+  
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
